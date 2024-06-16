@@ -6,7 +6,7 @@
 - 公有成员变量和构造函数用于初始化解复用器，设置文件路径，并查找视频和音频流。
 #### find_streams
 - 成员函数用于查找多媒体文件中的视频和音频流，并初始化解码器。
-#### [decode_video_thead和decode_audio_thread]()
+#### decode_video_thead和decode_audio_thread
 - 这两个方法用来解码视频和解码音频。
 - av_read_frame() 读取数据包，然后通过解码器解码这些数据包，并将解码后的帧放入队列中。
 #### ~Demuxer()
@@ -45,5 +45,17 @@
 - 线程池类
 #### [ThreadPool(size_t num_threads)]() 
 - 创建指定数量的线程，并将它们放入一个线程池中。
+#### ThreadPool(size_t num_threads)
+- 构造函数创建指定数量的线程，并将它们放入一个线程池中。
+####  ~ThreadPool() 
+- 线程池销毁，析构函数
+
+#### std::queue<std::function<void()>>
+- 任务队列，存储待执行的任务，每个任务被封装为 std::function。
+- 同步机制：使用 std::mutex 和 std::condition_variable 来同步对任务队列的访问和线程间的通信。
+- 线程工作循环：worker_thread() 函数是每个线程执行的循环，它从任务队列中取出任务并执行。
+- 任务提交：enqueue() 函数允许用户提交任务到线程池，并且返回一个 std::future 对象，该对象可以用来获取任务的异步结果。
+- 异常安全：如果尝试在已停止的线程池上提交任务，enqueue() 函数会抛出一个 std::runtime_error 异常。
+- 原子操作：使用 std::atomic<bool> 来控制线程池的停止状态，确保线程安全地读取和修改状态。
 
 

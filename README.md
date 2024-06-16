@@ -57,7 +57,7 @@
 #### enqueue() 
 - 任务提交，函数允许用户提交任务到线程池。
 ## [Utils]()
-####convertYuv420pToRgba(const AVFrame *yuvFrame, uint8_t **outData, int width2, int height2)
+#### convertYuv420pToRgba(const AVFrame *yuvFrame, uint8_t **outData, int width2, int height2)
 - 函数接受一个指向AVFrame结构的指针yuvFrame，这个结构包含了YUV420P格式的图像数据；一个指向uint8_t指针数组的指针outData，用于存储转换后的RGBA数据width2和height2分别是图像的宽度和高度。*outData = (uint8_t *)av_mallocz(width2 * height2 * 4);：使用av_mallocz函数分配一个足够大的缓冲区来存储转换后的RGBA数据。这里4是因为RGBA格式每个像素占用4个字节（红、绿、蓝、透明度）。
 struct SwsContext *sws_ctx = sws_getContext(...);：创建一个转换上下文SwsContext，用于在后续步骤中进行图像格式转换。sws_getContext函数初始化转换器，需要指定源图像和目标图像的宽度、高度、像素格式等参数。
 if (!sws_ctx) {...}：如果sws_getContext函数失败（即返回NULL），则释放之前分配的内存，并返回错误代码-1。

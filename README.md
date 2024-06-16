@@ -17,11 +17,37 @@
 - mutable std::mutex mtx; 定义了一个可变的互斥锁，用于同步访问共享资源。
 - std::condition_variable cv; 定义了一个条件变量，用于线程间的协调。
 - size_t max_size; 定义了队列的最大容量。
-#### [Queue(size_t size = 1000) : max_size(size) {}]
+#### [Queue(size_t size = 1000) : max_size(size) {}]()
 - 是类的构造函数，它接受一个可选参数 size 来设置队列的最大容量，默认为1000。
-#### [void enqueue(const T& element)] 
+#### [void enqueue(const T& element)]()
 - 是向队列添加元素的成员函数。它使用 std::unique_lock 来锁定互斥锁，并等待队列未满的条件。如果队列已满，调用线程将被阻塞，直到条件变量 cv 被唤醒。添加元素后，它将通知一个等待的消费者。
 - T dequeue() 是从队列中移除元素的成员函数。它同样使用 std::unique_lock 锁定互斥锁，并等待队列非空的条件。如果队列为空，调用线程将被阻塞。当条件满足时，它将移除并返回队列的第一个元素。
 - T getFrameByIndex(size_t index) 是通过索引获取队列中特定位置元素的成员函数。它使用 std::lock_guard 来锁定互斥锁，然后检查索引是否有效，如果索引超出范围，则抛出异常。
-- bool isEmpty() const 是检查队列是否为空的成员函数。这里注释掉了 std::lock_guard，但实际上为了线程安全，应该使用它来锁定互斥锁。
-- size_t getLen() 是获取队列长度的成员函数。同样，这里注释掉了 std::lock_guard，但出于线程安全考虑，应该使用它。
+- bool isEmpty() const 是检查队列是否为空的成员函数。
+- size_t getLen() 是获取队列长度的成员函数。
+## [CircleBuffer]()
+- 环形缓冲区模板类。
+- 私有成员变量：
+buffer：一个 std::vector<T> 类型的向量，用于存储缓冲区的元素。
+
+
+head：一个 size_t 类型的变量，指向队列头部的索引。
+
+
+tail：一个 size_t 类型的变量，指向队列尾部的索引，即下一个入队元素的位置。
+
+
+count：一个 size_t 类型的变量，表示当前队列中的元素数量。
+
+
+capacity：一个 size_t 类型的变量，表示缓冲区的最大容量。
+
+
+mtx：一个 std::mutex 类型的互斥锁，用于同步线程对缓冲区的访问。
+
+
+not_full 和 not_empty：两个 std::condition_variable 类型的条件变量，分别用于等待缓冲区非满和非空的状态。
+
+
+构造函数：CircularBuffer(size_t size)，初始化缓冲区的大小，并设置头、尾、计数器和容量。
+

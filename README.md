@@ -77,6 +77,7 @@ sws_freeContext(sws_ctx);：释放转换上下文，释放之前为转换器分�
 - videoFramerate 视频帧率，和倍速一起控制渲染速度。
 - mtx和condition_variable 生命的锁和条件变量，控制对共享变量的访问
 - std::unordered_map<int, uint8_t*> rgbaDataMap;//哈希表，存放rgba视频帧，由于内存是分页式管理，这样会太占内存，开始想弄哈希数组的。
+- isPaused bool变量，控制视音频的播放与暂停。
 #### toRgba
 - 渲染视频的函数，从队列中读取帧，通过convertYuv420pToRgba将frame转换成rgba数据
 - 释放资源，maplength
@@ -88,6 +89,17 @@ sws_freeContext(sws_ctx);：释放转换上下文，释放之前为转换器分�
 - 播放音频函数
 #### nativePlay
 - 播放调用的主函数，在该函数中声明demuxer对象，初始化对象，启动解码视频线程，启动解码音频函数，启动解码成rgba线程，启动播放视频线程，启动播放音频线程。
+#### nativeStop
+- 将isPaused设置为true
+#### nativePause
+- 接受一个bool 的参数，将isPaused设置为p。
+#### nativeSetSpeed
+- 接受int型参数speed，表示速度，将times改为speed。
+#### nativeGetDuration
+- 根据当前帧数量和总帧数量和视频计算总时长。帧/总帧*时长。
+#### nativeSeek
+- 接受一个double参数position，根据position改变index的值。
+
 
 # 项目总结
 ## 已完成的任务

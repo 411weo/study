@@ -56,7 +56,15 @@
 - 线程工作循环，函数是每个线程执行的循环，它从任务队列中取出任务并执行。
 #### enqueue() 
 - 任务提交，函数允许用户提交任务到线程池。
-
+## [Utils]()
+####convertYuv420pToRgba(const AVFrame *yuvFrame, uint8_t **outData, int width2, int height2)
+- 函数接受一个指向AVFrame结构的指针yuvFrame，这个结构包含了YUV420P格式的图像数据；一个指向uint8_t指针数组的指针outData，用于存储转换后的RGBA数据width2和height2分别是图像的宽度和高度。*outData = (uint8_t *)av_mallocz(width2 * height2 * 4);：使用av_mallocz函数分配一个足够大的缓冲区来存储转换后的RGBA数据。这里4是因为RGBA格式每个像素占用4个字节（红、绿、蓝、透明度）。
+struct SwsContext *sws_ctx = sws_getContext(...);：创建一个转换上下文SwsContext，用于在后续步骤中进行图像格式转换。sws_getContext函数初始化转换器，需要指定源图像和目标图像的宽度、高度、像素格式等参数。
+if (!sws_ctx) {...}：如果sws_getContext函数失败（即返回NULL），则释放之前分配的内存，并返回错误代码-1。
+uint8_t *srcData[3] = {...}; 和 int srcStride[3] = {...};：定义源数据指针数组srcData和步长数组srcStride，分别存储YUV420P格式的三个颜色平面的数据指针和每行数据的字节数。
+uint8_t *dstData[1] = {...}; 和 int dstStride[1] = {...};：定义目标数据指针数组dstData和步长数组dstStride，用于存储转换后的RGBA数据。
+if (sws_scale(...) < 0) {...}：使用sws_scale函数执行实际的图像格式转换。如果转换失败（即返回值小于0），则释放转换上下文和之前分配的内存，并返回错误代码-1。
+sws_freeContext(sws_ctx);：释放转换上下文，释放之前为转换器分配的资源。
 ## [Native-lib.cpp]()
 - 主逻辑函数，在这里声明全局变量，构造对象。
 #### 全局变量
@@ -87,7 +95,7 @@
 - 视频能够正常播放，暂停复播，倍速播放，拖拽进度条，返回视频时长。
 - 程序应该不会闪退。
 - 音频播放只实现了一次。
-- 多线程编解码。
+- 多线程编解码播放。
 ## 遇到的问题
 #### 第一天配环境卡在了合并包那里，耽误了好久，导致最后功能没实现完全，reademe也没认真写。
 #### 第二天存储在队列的帧拿出来不对，原因是没有深拷贝放入队列，但第二天是用多线程解决音视频的解码的。a
